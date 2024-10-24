@@ -7,3 +7,31 @@
     @apply bg-gray-900 text-white;
   }
 }
+
+@keyframes wave {
+  0%,
+  60%,
+  100% {
+    transform: initial;
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-wave {
+  animation: wave 1.2s infinite ease-in-out;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+.delay-600 {
+  animation-delay: 0.6s;
+}
+

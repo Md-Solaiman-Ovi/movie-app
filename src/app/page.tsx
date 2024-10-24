@@ -10,8 +10,10 @@ import {
 } from "../app/redux/moviesSlice";
 import MovieCard from "../app/components/movieCard";
 import SearchBar from "../app/components/searchBar";
-import Navbar from "../app/components/navbar";
+
 import { RootState, AppDispatch } from "../app/redux/store"; // Import your RootState type
+import ScrollToTopButton from "./components/scrollToTopButton";
+import Loading from "./loading";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,28 +38,31 @@ const Home = () => {
       dispatch(clearSearchResults());
     }
   };
-  console.log(searchResults);
+
   const moviesToDisplay =
     searchResults.length > 0 ? searchResults : popularMovies; // Display search results if available
 
   return (
-    <div>
-      <Navbar />
+    <div className="">
       <SearchBar onSearch={handleSearch} />
       <div className="container mx-auto py-10">
+        <div className="text-white font-bold text-4xl mb-8">Popular Movies</div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-          {moviesToDisplay.map((movie, index) => (
-            <MovieCard
-              key={`${movie.id}-${index}`}
-              id={movie.id}
-              title={movie.title}
-              posterPath={movie.poster_path}
-              releaseDate="10"
-              rating={0}
-            />
-          ))}
+          {moviesToDisplay.map((movie, index) => {
+            console.log(movie.vote_average);
+            return (
+              <MovieCard
+                key={`${movie.id}-${index}`}
+                id={movie.id}
+                title={movie.title}
+                posterPath={movie.poster_path}
+                releaseDate={movie.release_date}
+                rating={movie.vote_average}
+              />
+            );
+          })}
         </div>
-        {status === "loading" && <div className="text-center">Loading...</div>}
+        {status === "loading" && <Loading />}
         <div className="text-center my-8">
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded-md"
@@ -68,6 +73,7 @@ const Home = () => {
           </button>
         </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 };
