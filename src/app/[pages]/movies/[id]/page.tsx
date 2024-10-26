@@ -2,6 +2,7 @@
 
 import RecommendationCard from "@/app/components/recommendationCard";
 import Image from "next/image";
+import { FC } from "react";
 
 interface Genre {
   id: number;
@@ -12,7 +13,7 @@ interface CastMember {
   id: number;
   name: string;
   character: string;
-  profile_path: string;
+  profile_path: string | null;
 }
 
 interface Movie {
@@ -33,21 +34,19 @@ interface Recommendation {
   release_date: string;
 }
 
-// Fetch movie details and recommendations using SSR with ISR
-const MovieDetails = async ({ params }: { params: { id: string } }) => {
-  const movieId = params.id;
+// Define the component with the correct props structure
+const MovieDetails: FC<{ params: Promise<{ id: string }> }> = async ({
+  params,
+}) => {
+  const { id: movieId } = await params; // Await the params object
 
   // Fetch movie details
   const res = await fetch(
     `https://api.themoviedb.org/3/movie/${movieId}?api_key=8c01d5c6e334cbb4f4456de6d14536e7`,
-    {
-      next: { revalidate: 60 },
-    }
+    { next: { revalidate: 60 } }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch movie details");
-  }
+  if (!res.ok) throw new Error("Failed to fetch movie details");
 
   const movie: Movie = await res.json();
 
@@ -56,41 +55,36 @@ const MovieDetails = async ({ params }: { params: { id: string } }) => {
     `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=8c01d5c6e334cbb4f4456de6d14536e7`
   );
 
-  if (!creditsRes.ok) {
-    throw new Error("Failed to fetch movie credits");
-  }
+  if (!creditsRes.ok) throw new Error("Failed to fetch movie credits");
 
   const creditsData = await creditsRes.json();
-  const cast: CastMember[] = creditsData.cast.slice(0, 5); // Limit to top 5 cast members
+  const cast: CastMember[] = creditsData.cast.slice(0, 5); // Top 5 cast members
 
   // Fetch movie recommendations
   const recommendationsRes = await fetch(
     `https://api.themoviedb.org/3/movie/${movieId}/recommendations?api_key=8c01d5c6e334cbb4f4456de6d14536e7`,
-    {
-      next: { revalidate: 60 },
-    }
+    { next: { revalidate: 60 } }
   );
 
-  if (!recommendationsRes.ok) {
-    throw new Error("Failed to fetch movie recommendations");
-  }
+  if (!recommendationsRes.ok)
+    throw new Error("Failed to fetch recommendations");
 
   const recommendationsData = await recommendationsRes.json();
   const recommendations: Recommendation[] = recommendationsData.results.slice(
     0,
     5
-  ); // Limit to top 5 recommendations
+  ); // Top 5 recommendations
 
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col py-10">
-      <div className="flex flex-col md:flex-row p-6 container mx-auto py-10">
+      <div className="flex flex-col md:flex-row px-4 md:px-0 gap-4 container mx-auto py-10 justify-center items-center">
         <div className="md:w-1/3 mb-6 md:mb-0">
           <Image
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
             width={300}
             height={450}
-            className="rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
+            className="rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 size-full"
           />
         </div>
         <div className="md:w-2/3 md:pl-6">
@@ -122,7 +116,7 @@ const MovieDetails = async ({ params }: { params: { id: string } }) => {
                     alt={member.name}
                     width={30}
                     height={30}
-                    className="rounded-full inline-block ml-2 size-7"
+                    className="rounded-full inline-block ml-2"
                   />
                 )}
               </li>
@@ -132,16 +126,18 @@ const MovieDetails = async ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Recommendations Section */}
-      <div className="  mt-6 container mx-auto py-10">
-        <h2 className="text-2xl font-bold mb-4">Related Recommendations</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 ">
+      <div className="mt-6 container mx-auto px-4 md:px-0  py-10">
+        <h2 className="text-2xl md:text-4xl font-bold mb-4">
+          Related Recommendations
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {recommendations.map((recommendation) => (
             <RecommendationCard
               key={recommendation.id}
               id={recommendation.id}
               title={recommendation.title}
               posterPath={recommendation.poster_path}
-              rating={recommendation.vote_average} // Optional: if you want to show the rating
+              rating={recommendation.vote_average}
               releaseDate={recommendation.release_date}
             />
           ))}

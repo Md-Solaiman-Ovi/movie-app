@@ -28,7 +28,8 @@ const Home = () => {
     searchResults.length > 0 ? searchResults : popularMovies; // Display search results if available
   console.log(moviesToDisplay);
   return (
-    <div className={`${moviesToDisplay ? "" : "h-screen "} bg-gray-900`}>
+    // className={`${moviesToDisplay ? "" : "h-screen"} bg-gray-900 `}
+    <div>
       <SearchBar onSearch={handleSearch} />
       <PopularMovies moviesToDisplay={moviesToDisplay} />
       <ScrollToTopButton />
