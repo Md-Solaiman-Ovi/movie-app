@@ -29,7 +29,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         />
         <button
           type="submit"
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md"
+          className="ml-2 px-4 py-2 bg-gradient-to-r from-indigo-900  to-purple-900 text-white rounded-md"
         >
           Search
         </button>

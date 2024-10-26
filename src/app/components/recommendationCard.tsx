@@ -1,27 +1,30 @@
+// src/components/RecommendationCard.tsx
+
 "use client";
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-interface MovieCardProps {
+interface RecommendationCardProps {
   id: number;
   title: string;
   posterPath: string;
-  releaseDate: string;
   rating: number;
+  releaseDate: string;
+  // Optional: if you want to show the rating
 }
 
-const MovieCard: React.FC<MovieCardProps> = ({
+const RecommendationCard: React.FC<RecommendationCardProps> = ({
   id,
   title,
   posterPath,
-  releaseDate,
   rating,
+  releaseDate,
 }) => {
   return (
-    <Link href={`/pages/movies/${id}`} passHref>
-      <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 hover:shadow-xl cursor-pointer h-[400px]">
+    <Link href={`/movies/${id}`} passHref className="">
+      <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden text-center transform transition duration-500 hover:scale-105 hover:shadow-xl cursor-pointer h-[400px]">
         <div className="relative w-full h-64">
           <Image
             src={`https://image.tmdb.org/t/p/w500${posterPath}`}
@@ -38,9 +41,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
             <p className="text-gray-400 text-sm ">
               Release Date: {new Date(releaseDate).toLocaleDateString()}
             </p>
-            <p className="text-yellow-400 font-semibold">
-              ⭐ {rating.toFixed(1)}/10
-            </p>
+            {rating && (
+              <p className="text-yellow-400 font-semibold">
+                ⭐ {rating.toFixed(1)}/10
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -48,4 +53,4 @@ const MovieCard: React.FC<MovieCardProps> = ({
   );
 };
 
-export default MovieCard;
+export default RecommendationCard;
