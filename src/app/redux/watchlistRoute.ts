@@ -1,33 +1,21 @@
-// Define the Movie type or interface
-interface Movie {
-    id: number;
-    title: string;
-    poster_path: string;
-    overview: string;
-    release_date: string;
-  }
-  
-  // Use the Movie type for the watchlist array
-  let watchlist: Movie[] = [];
-  
-  // Example of an API handler using this typed watchlist
-  export async function POST(request: Request) {
-    const body = await request.json();
-    watchlist.push(body.movie as Movie); // Ensure the movie added matches the Movie type
-    return new Response(JSON.stringify({ status: "Movie added to watchlist" }), {
-      status: 200,
-    });
-  }
-  
-  export async function DELETE(request: Request) {
-    const body = await request.json();
-    watchlist = watchlist.filter((movie) => movie.id !== body.id);
-    return new Response(JSON.stringify({ status: "Movie removed from watchlist" }), {
-      status: 200,
-    });
-  }
-  
-  export async function GET() {
-    return new Response(JSON.stringify(watchlist), { status: 200 });
-  }
-  
+// src/app/api/watchlist/route.ts
+
+import { NextResponse } from 'next/server';
+
+let watchlist: { id: number; title: string; poster_path: string; vote_average: number; release_date: string; }[] = [];
+
+export async function GET() {
+  return NextResponse.json(watchlist);
+}
+
+export async function POST(request: Request) {
+  const movie = await request.json();
+  watchlist.push(movie);
+  return NextResponse.json({ message: 'Added to watchlist' }, { status: 201 });
+}
+
+export async function DELETE(request: Request) {
+  const { id } = await request.json();
+  watchlist = watchlist.filter(movie => movie.id !== id);
+  return NextResponse.json({ message: 'Removed from watchlist' });
+}

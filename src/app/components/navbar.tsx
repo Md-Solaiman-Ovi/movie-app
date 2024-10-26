@@ -6,7 +6,7 @@ const Navbar = () => (
       <Link href="/">
         <p className="text-2xl font-bold">MovieApp</p>
       </Link>
-      <Link href="/watchlist">
+      <Link href="/pages/watchlist">
         <p className="text-lg">Watchlist</p>
       </Link>
     </div>
